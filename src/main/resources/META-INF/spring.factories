@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+com.rbkmoney.three.ds.server.client.configuration.Mpi3DsClientConfiguration
