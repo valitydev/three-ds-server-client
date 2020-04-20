@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.Map;
 
 @NoArgsConstructor
-public class Mpi3DsClientValidator implements Validator {
+public class Mpi3DsClientValidator {
 
     private static String[] requiredFields = {
             CommonField.THREE_DS_REQUESTOR_NAME.getValue(),
