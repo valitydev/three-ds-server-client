@@ -12,7 +12,7 @@
     </parent>
 
     <artifactId>three-ds-server-client</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <packaging>jar</packaging>
 
     <name>three-ds-server-client</name>
@@ -34,7 +34,7 @@
         <cds-proto.version>1.57-b58a3fd</cds-proto.version>
         <damsel.version>1.391-8fe5f98</damsel.version>
 
-        <lombok.version>1.18.4</lombok.version>
+        <lombok.version>1.18.12</lombok.version>
     </properties>
 
     <dependencies>
