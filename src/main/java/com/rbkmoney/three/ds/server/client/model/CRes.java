@@ -1,7 +1,9 @@
 package com.rbkmoney.three.ds.server.client.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.rbkmoney.threeds.server.domain.message.MessageExtension;
+import com.rbkmoney.threeds.server.serialization.deserializer.MessageExtensionDeserializer;
 import lombok.*;
 
 import java.util.List;
@@ -19,9 +21,6 @@ public class CRes {
 
     @ToString.Include
     private String messageVersion;
-
-    @ToString.Include
-    private String htmlCreq;
 
     @ToString.Include
     private String threeDSServerTransID;
@@ -66,6 +65,7 @@ public class CRes {
     private String issuerImage;
 
     @ToString.Include
+    @JsonDeserialize(using = MessageExtensionDeserializer.class)
     private List<MessageExtension> messageExtension;
 
     @ToString.Include

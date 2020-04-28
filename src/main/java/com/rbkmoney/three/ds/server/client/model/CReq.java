@@ -3,16 +3,14 @@ package com.rbkmoney.three.ds.server.client.model;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.rbkmoney.threeds.server.domain.message.MessageExtension;
 import com.rbkmoney.threeds.server.domain.message.MessageType;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.util.List;
 
-@Getter
-@Setter
+@Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @JsonInclude(value = JsonInclude.Include.NON_ABSENT)
 @ToString(onlyExplicitlyIncluded = true)
 public class CReq {

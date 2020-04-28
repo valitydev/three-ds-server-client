@@ -1,7 +1,11 @@
 package com.rbkmoney.three.ds.server.client.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.rbkmoney.threeds.server.domain.message.MessageExtension;
+import com.rbkmoney.threeds.server.domain.transaction.TransactionStatus;
+import com.rbkmoney.threeds.server.serialization.EnumWrapper;
+import com.rbkmoney.threeds.server.serialization.deserializer.TransactionStatusDeserializer;
 import lombok.*;
 
 import java.util.List;
@@ -12,7 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 @JsonInclude(value = JsonInclude.Include.NON_ABSENT)
 @ToString(onlyExplicitlyIncluded = true)
-public class CReqHtml {
+public class FinalCRes {
 
     @ToString.Include
     private String messageType;
@@ -24,7 +28,7 @@ public class CReqHtml {
     private String threeDSServerTransID;
 
     @ToString.Include
-    private String acsCounterAtos;
+    private String acsCounterAtoS;
 
     @ToString.Include
     private String acsTransID;
@@ -33,12 +37,13 @@ public class CReqHtml {
     private String challengeCompletionInd;
 
     @ToString.Include
+    private List<MessageExtension> messageExtension;
+
+    @ToString.Include
     private String sdkTransID;
 
     @ToString.Include
-    private String transStatus;
-
-    @ToString.Include
-    private List<MessageExtension> messageExtension;
+    @JsonDeserialize(using = TransactionStatusDeserializer.class)
+    private EnumWrapper<TransactionStatus> transStatus;
 
 }

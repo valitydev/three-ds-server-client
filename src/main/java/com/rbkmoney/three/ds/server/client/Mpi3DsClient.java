@@ -7,7 +7,6 @@ import com.rbkmoney.damsel.proxy_provider.RecurrentTokenContext;
 import com.rbkmoney.java.cds.utils.model.CardDataProxyModel;
 import com.rbkmoney.three.ds.server.client.configuration.Mpi3DsClientProperties;
 import com.rbkmoney.three.ds.server.client.constant.CommonField;
-import com.rbkmoney.three.ds.server.client.constant.HeaderField;
 import com.rbkmoney.three.ds.server.client.constant.Method;
 import com.rbkmoney.three.ds.server.client.exception.Mpi3DsClientException;
 import com.rbkmoney.three.ds.server.client.utils.generate.GenerateUtils;
@@ -99,6 +98,7 @@ public class Mpi3DsClient {
 
     private AReq prepareAReq(String threeDSRequestorID, ThreeDSRequestorAuthenticationInd threeDSRequestorAuthenticationInd, Map<String, String> options, CardDataProxyModel cardData, String notificationUrl) {
         AReq aReq = new AReq();
+        // TODO: expect a protocol change to get the structure Browser
         aReq.setMessageVersion("2.1.0");
         aReq.setMessageCategory(MessageCategory.PAYMENT_AUTH);
         aReq.setCardholderName(cardData.getCardholderName());
@@ -128,8 +128,6 @@ public class Mpi3DsClient {
 
     private HttpHeaders prepareHttpHeaders() {
         HttpHeaders headers = new HttpHeaders();
-        // TODO: REMOVE, ONLY FOR TEST DS
-        headers.set(HeaderField.ID.getValue(), "x-ul-testcaserun-id");
         headers.setContentType(MediaType.APPLICATION_JSON);
         return headers;
     }
