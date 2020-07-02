@@ -12,7 +12,7 @@
     </parent>
 
     <artifactId>three-ds-server-client</artifactId>
-    <version>1.0.2</version>
+    <version>1.0.3</version>
     <packaging>jar</packaging>
 
     <name>three-ds-server-client</name>
@@ -29,10 +29,10 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
 
-        <three-ds-server-domain-lib.version>1.0.0</three-ds-server-domain-lib.version>
+        <three-ds-server-domain-lib.version>1.0.6</three-ds-server-domain-lib.version>
         <adapter-thrift-lib.version>1.0.3</adapter-thrift-lib.version>
-        <cds-proto.version>1.57-b58a3fd</cds-proto.version>
-        <damsel.version>1.391-8fe5f98</damsel.version>
+        <cds-proto.version>1.59-530875f</cds-proto.version>
+        <damsel.version>1.427-075185c</damsel.version>
 
         <lombok.version>1.18.12</lombok.version>
     </properties>
