@@ -12,13 +12,17 @@ import com.rbkmoney.three.ds.server.client.exception.Mpi3DsClientException;
 import com.rbkmoney.three.ds.server.client.utils.generate.GenerateUtils;
 import com.rbkmoney.three.ds.server.client.validator.Mpi3DsClientValidator;
 import com.rbkmoney.threeds.server.domain.BrowserColorDepth;
+import com.rbkmoney.threeds.server.domain.Valuable;
 import com.rbkmoney.threeds.server.domain.device.DeviceChannel;
 import com.rbkmoney.threeds.server.domain.message.MessageCategory;
 import com.rbkmoney.threeds.server.domain.root.Message;
 import com.rbkmoney.threeds.server.domain.root.emvco.AReq;
 import com.rbkmoney.threeds.server.domain.root.emvco.ARes;
+import com.rbkmoney.threeds.server.domain.root.proprietary.PArq;
+import com.rbkmoney.threeds.server.domain.root.proprietary.PArs;
 import com.rbkmoney.threeds.server.domain.threedsrequestor.ThreeDSRequestorAuthenticationInd;
 import com.rbkmoney.threeds.server.domain.threedsrequestor.ThreeDsMethodCompletionIndicator;
+import com.rbkmoney.threeds.server.serialization.EnumWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
@@ -49,11 +53,38 @@ public class Mpi3DsClient {
         this.objectMapper = objectMapper;
     }
 
+    public PArs authentication(PArq pArq) {
+        return send(Method.AUTHENTICATION, pArq, PArs.class);
+    }
+
+    public PArs authentication(PaymentContext context, CardDataProxyModel cardData, String notificationUrl) {
+        Map<String, String> options = context.getOptions();
+        Mpi3DsClientValidator validator = new Mpi3DsClientValidator();
+        validator.validate(options);
+
+        String threeDSRequestorID = GenerateUtils.generateTransactionId(context);
+        ThreeDSRequestorAuthenticationInd threeDSRequestorAuthenticationInd = prepareThreeDSRequestorAuthenticationInd(context);
+        PArq pArq = preparePArq(threeDSRequestorID, threeDSRequestorAuthenticationInd, options, cardData, notificationUrl);
+        return authentication(pArq);
+    }
+
+    public PArs authentication(RecurrentTokenContext context, CardDataProxyModel cardData, String notificationUrl) {
+        Map<String, String> options = context.getOptions();
+        Mpi3DsClientValidator validator = new Mpi3DsClientValidator();
+        validator.validate(options);
+
+        String threeDSRequestorID = GenerateUtils.generateTransactionId(context);
+        ThreeDSRequestorAuthenticationInd threeDSRequestorAuthenticationInd = prepareThreeDSRequestorAuthenticationInd(context);
+        PArq pArq = preparePArq(threeDSRequestorID, threeDSRequestorAuthenticationInd, options, cardData, notificationUrl);
+        return authentication(pArq);
+    }
+
+
     public ARes authentication(AReq areq) {
         return send(Method.AUTHENTICATION, areq, ARes.class);
     }
 
-    public ARes authentication(PaymentContext context, CardDataProxyModel cardData, String notificationUrl) {
+    public ARes authenticationAReq(PaymentContext context, CardDataProxyModel cardData, String notificationUrl) {
         Map<String, String> options = context.getOptions();
         Mpi3DsClientValidator validator = new Mpi3DsClientValidator();
         validator.validate(options);
@@ -64,7 +95,7 @@ public class Mpi3DsClient {
         return authentication(aReq);
     }
 
-    public ARes authentication(RecurrentTokenContext context, CardDataProxyModel cardData, String notificationUrl) {
+    public ARes authenticationAReq(RecurrentTokenContext context, CardDataProxyModel cardData, String notificationUrl) {
         Map<String, String> options = context.getOptions();
         Mpi3DsClientValidator validator = new Mpi3DsClientValidator();
         validator.validate(options);
@@ -94,6 +125,39 @@ public class Mpi3DsClient {
             // TODO: handle error DS server ?
             throw new Mpi3DsClientException(ex);
         }
+    }
+
+    private PArq preparePArq(String threeDSRequestorID, ThreeDSRequestorAuthenticationInd threeDSRequestorAuthenticationInd, Map<String, String> options, CardDataProxyModel cardData, String notificationUrl) {
+        PArq pArq = new PArq();
+//        // TODO: expect a protocol change to get the structure Browser
+        pArq.setMessageVersion("2.1.0");
+        pArq.setMessageCategory(prepareEnumWrapper(MessageCategory.PAYMENT_AUTH));
+        pArq.setCardholderName(cardData.getCardholderName());
+        pArq.setDeviceChannel(prepareEnumWrapper(DeviceChannel.BROWSER));
+        pArq.setThreeDSCompInd(prepareEnumWrapper(ThreeDsMethodCompletionIndicator.SUCCESSFULLY_COMPLETED));
+
+        pArq.setThreeDSRequestorID(threeDSRequestorID);
+
+        pArq.setThreeDSRequestorName(options.get(CommonField.THREE_DS_REQUESTOR_NAME.getValue()));
+        pArq.setThreeDSRequestorURL(options.get(CommonField.THREE_DS_REQUESTOR_URL.getValue()));
+
+        pArq.setBrowserAcceptHeader("text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+        pArq.setBrowserJavaEnabled(true);
+        pArq.setBrowserJavascriptEnabled(true);
+        pArq.setBrowserLanguage("ru-RU");
+
+        pArq.setBrowserColorDepth(prepareEnumWrapper(BrowserColorDepth.BITS_32));
+
+        pArq.setBrowserScreenHeight("1920");
+        pArq.setBrowserScreenWidth("1080");
+        pArq.setBrowserTZ("0");
+        pArq.setBrowserUserAgent("Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:47.0) Gecko/20100101 Firefox/47.0");
+
+        pArq.setAcctID(cardData.getPan());
+        pArq.setNotificationURL(notificationUrl);
+
+        pArq.setThreeDSRequestorAuthenticationInd(prepareEnumWrapper(threeDSRequestorAuthenticationInd));
+        return pArq;
     }
 
     private AReq prepareAReq(String threeDSRequestorID, ThreeDSRequestorAuthenticationInd threeDSRequestorAuthenticationInd, Map<String, String> options, CardDataProxyModel cardData, String notificationUrl) {
@@ -142,5 +206,11 @@ public class Mpi3DsClient {
 
     private ThreeDSRequestorAuthenticationInd prepareThreeDSRequestorAuthenticationInd(RecurrentTokenContext context) {
         return ThreeDSRequestorAuthenticationInd.PAYMENT_TRANSACTION;
+    }
+
+    private static <T extends Valuable> EnumWrapper<T> prepareEnumWrapper(T eEnum) {
+        EnumWrapper<T> enumWrapper = new EnumWrapper<>();
+        enumWrapper.setValue(eEnum);
+        return enumWrapper;
     }
 }
