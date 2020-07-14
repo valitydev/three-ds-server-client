@@ -12,7 +12,7 @@
     </parent>
 
     <artifactId>three-ds-server-client</artifactId>
-    <version>1.0.4</version>
+    <version>1.0.5</version>
     <packaging>jar</packaging>
 
     <name>three-ds-server-client</name>

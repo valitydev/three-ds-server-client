@@ -81,6 +81,6 @@ om.registerModule(new JavaTimeModule());
 @Autowired
 Mpi3DsClient mpiClient;
 
-ARes authenticationResponse = mpiClient.authentication(authenticationRequestMessage );
+AuthenticationResponse response = mpiClient.authentication(request);
 
 ```

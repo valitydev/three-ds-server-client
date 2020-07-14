@@ -1,5 +1,6 @@
 package com.rbkmoney.three.ds.server.client.constant;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -19,5 +20,10 @@ public enum Method {
     PROPRIETARY_PREPARATION("Proprietary Preparation");
 
     private final String value;
+
+    @JsonValue
+    public String getValue() {
+        return value;
+    }
 
 }

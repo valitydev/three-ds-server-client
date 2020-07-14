@@ -15,7 +15,7 @@ public class Mpi3DsClientValidator {
             CommonField.THREE_DS_REQUESTOR_URL.getValue()
     };
 
-    public void validate(Map<String, String> options) {
+    public static void validate(Map<String, String> options) {
         boolean result = Arrays.stream(requiredFields).allMatch(options::containsKey);
         if (!result) {
             throw new Mpi3DsClientException(String.format("Not found some required fields %s", Arrays.asList(requiredFields)));
