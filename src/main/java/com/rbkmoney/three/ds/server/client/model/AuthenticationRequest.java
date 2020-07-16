@@ -56,6 +56,7 @@ public class AuthenticationRequest {
     @JsonProperty("acctInfo")
     private AccountInfo cardholderAccountInformation;
 
+    @ToString.Exclude
     @JsonProperty("acctNumber")
     private String cardholderAccountNumber;
 
