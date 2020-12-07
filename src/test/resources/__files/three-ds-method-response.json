@@ -1,0 +1,4 @@
+{
+  "htmlThreeDsMethodData": "<form name=\"ThreeDsMethodForm\"\n      action=\"url2\"\n      method=\"POST\">\n    <input type=\"hidden\"\n           name=\"threeDSMethodData\"\n           value=\"eyJ0aHJlZURTU2VydmVyVHJhbnNJRCI6IjEiLCJ0aHJlZURTTWV0aG9kTm90aWZpY2F0aW9uVVJMIjoidXJsMSJ9\"\n    />\n</form>",
+  "threeDsServerTransId": "1"
+}

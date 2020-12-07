@@ -1,0 +1,6 @@
+{
+  "messageType": "RBKMONEY_AUTHENTICATION_RESPONSE",
+  "messageVersion": "2.1.0",
+  "threeDSServerTransID": "threeDsServerTransId",
+  "acsURL": "acsURL"
+}
