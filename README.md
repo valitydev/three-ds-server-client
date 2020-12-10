@@ -1,4 +1,4 @@
-# Three-DS Server Client
+# three-ds-server-client
 
 
 Библиотека взаимодействия клиента с 3DS сервисом RBK.money
@@ -6,10 +6,10 @@
 
 ## схема интеграции
 
-1) 3DS Versioning `threeDsClient.versioning(...)`
-2) 3DS Method `threeDsClient.threeDsMethod(...)`
-3) 3DS EMVCo Authentication `threeDsClient.emvcoAuthentication(...)`
-4) ... ?
+1) 3DS Versioning ```threeDsClient.threeDsVersioning(.)```
+2) 3DS Method ```threeDsClient.threeDsMethod(.)```
+3) 3DS Authentication ```threeDsClient.emvcoAuthentication(.)```
+4) ... ? todo
 
 
 todo **Добавить схему инетграции клиента с адаптерамии после тестирования 3дс транзакции с нспк**

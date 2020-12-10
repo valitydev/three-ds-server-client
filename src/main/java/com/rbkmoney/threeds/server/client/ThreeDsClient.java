@@ -27,7 +27,8 @@ import com.rbkmoney.threeds.server.domain.threedsmethod.ThreeDsMethodResponse;
 import com.rbkmoney.threeds.server.domain.threedsrequestor.*;
 import com.rbkmoney.threeds.server.domain.transaction.TransactionType;
 import com.rbkmoney.threeds.server.domain.unwrapped.Address;
-import com.rbkmoney.threeds.server.domain.versioning.ThreeDsVersion;
+import com.rbkmoney.threeds.server.domain.versioning.ThreeDsVersionRequest;
+import com.rbkmoney.threeds.server.domain.versioning.ThreeDsVersionResponse;
 import com.rbkmoney.threeds.server.domain.whitelist.WhiteListStatus;
 import com.rbkmoney.threeds.server.domain.whitelist.WhiteListStatusSource;
 import com.rbkmoney.threeds.server.serialization.EnumWrapper;
@@ -54,21 +55,20 @@ public class ThreeDsClient {
 
     private static final String REQUEST_LOG = "-> Req [{}]: {}";
     private static final String RESPONSE_LOG = "<- Res [{}]: {}";
-    private static final String ACCOUNT_NUMBER_PARAM_NAME = "account_number";
 
     private final RestTemplate restTemplate;
     private final ThreeDsClientProperties properties;
 
-    public Optional<ThreeDsVersion> versioning(String pan) {
+    public Optional<ThreeDsVersionResponse> threeDsVersioning(String accountNumber) {
         String url = properties.getVersioningUrl();
-        String endpoint = "GET " + url;
+        String endpoint = "POST " + url;
 
-        log.info(REQUEST_LOG, endpoint, hideAccountNumber(pan));
+        log.info(REQUEST_LOG, endpoint, hideAccountNumber(accountNumber));
 
-        String urlWithRequestParameters = String.format("%s?%s=%s", url, ACCOUNT_NUMBER_PARAM_NAME, pan);
+        ThreeDsVersionRequest request = threeDsVersionRequest(accountNumber);
 
-        Optional<ThreeDsVersion> response = Optional.ofNullable(
-                restTemplate.getForObject(urlWithRequestParameters, ThreeDsVersion.class));
+        Optional<ThreeDsVersionResponse> response = Optional.ofNullable(
+                restTemplate.postForObject(url, request, ThreeDsVersionResponse.class));
 
         log.info(RESPONSE_LOG, endpoint, response.toString());
 
@@ -94,7 +94,7 @@ public class ThreeDsClient {
         return response;
     }
 
-    public Optional<Message> emvcoAuthentication(
+    public Optional<Message> threeDsAuthentication(
             ThreeDsMethodCompletionInd threeDsMethodCompletionInd,
             PaymentContext context,
             String threeDsServerTransId,
@@ -103,10 +103,10 @@ public class ThreeDsClient {
         RBKMoneyAuthenticationRequest rbkMoneyAuthenticationRequest = rbkMoneyAuthenticationRequest(
                 threeDsMethodCompletionInd, context, threeDsServerTransId, cardDataProxyModel, dsEndProtocolVersion);
 
-        return emvcoAuthentication(rbkMoneyAuthenticationRequest);
+        return threeDsAuthentication(rbkMoneyAuthenticationRequest);
     }
 
-    public Optional<Message> emvcoAuthentication(RBKMoneyAuthenticationRequest rbkMoneyAuthenticationRequest) {
+    public Optional<Message> threeDsAuthentication(RBKMoneyAuthenticationRequest rbkMoneyAuthenticationRequest) {
         String url = properties.getSdkUrl();
         String endpoint = "POST " + url;
 
@@ -284,6 +284,12 @@ public class ThreeDsClient {
         messageExtension.setCriticalityIndicator(false); //todo
         messageExtension.setId("hkdohdcymz"); //todo
         return messageExtension;
+    }
+
+    private ThreeDsVersionRequest threeDsVersionRequest(String accountNumber) {
+        return ThreeDsVersionRequest.builder()
+                .accountNumber(accountNumber)
+                .build();
     }
 
     private ThreeDsMethodRequest threeDsMethodRequest(String threeDsServerTransId, String threeDsMethodNotificationUrl, String threeDsMethodUrl) {

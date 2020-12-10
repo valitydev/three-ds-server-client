@@ -7,7 +7,8 @@ import com.rbkmoney.threeds.server.domain.root.emvco.ErroWrapper;
 import com.rbkmoney.threeds.server.domain.root.rbkmoney.RBKMoneyAuthenticationResponse;
 import com.rbkmoney.threeds.server.domain.threedsmethod.ThreeDsMethodResponse;
 import com.rbkmoney.threeds.server.domain.threedsrequestor.ThreeDsMethodCompletionInd;
-import com.rbkmoney.threeds.server.domain.versioning.ThreeDsVersion;
+import com.rbkmoney.threeds.server.domain.versioning.ThreeDsVersionRequest;
+import com.rbkmoney.threeds.server.domain.versioning.ThreeDsVersionResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,8 +19,7 @@ import java.util.Optional;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.rbkmoney.threeds.server.client.utils.DamselUtils.getCardDataProxyModel;
 import static com.rbkmoney.threeds.server.client.utils.DamselUtils.getPaymentContext;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class ThreeDsClientTest extends AbstractThreeDsClientConfig {
 
@@ -30,14 +30,15 @@ public class ThreeDsClientTest extends AbstractThreeDsClientConfig {
     private JsonMapper jsonMapper;
 
     @Test
-    public void shouldReturnThreeDsVersionIfVersioningIsValid() {
-        stubFor(get(urlEqualTo("/versioning?account_number=1234567890"))
+    public void shouldReturnThreeDsVersionResponseIfVersioningIsValid() {
+        stubFor(post(urlEqualTo("/versioning"))
+                .withRequestBody(equalToJson(jsonMapper.writeValueAsString(ThreeDsVersionRequest.builder().accountNumber("1234567890").build()), true, true))
                 .willReturn(aResponse()
                         .withStatus(HttpStatus.OK.value())
                         .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
                         .withBody(resource("versioning.json"))));
 
-        Optional<ThreeDsVersion> threeDsVersion = threeDsClient.versioning("1234567890");
+        Optional<ThreeDsVersionResponse> threeDsVersion = threeDsClient.threeDsVersioning("1234567890");
 
         assertTrue(threeDsVersion.isPresent());
         assertEquals("visa", threeDsVersion.get().getDsProviderId());
@@ -55,7 +56,7 @@ public class ThreeDsClientTest extends AbstractThreeDsClientConfig {
         Optional<ThreeDsMethodResponse> threeDsMethodResponse = threeDsClient.threeDsMethod("1", "url1", "url2");
 
         assertTrue(threeDsMethodResponse.isPresent());
-        assertEquals("1", threeDsMethodResponse.get().getThreeDsServerTransId());
+        assertNotNull(threeDsMethodResponse.get().getHtmlThreeDsMethodData());
     }
 
     @Test
@@ -69,7 +70,7 @@ public class ThreeDsClientTest extends AbstractThreeDsClientConfig {
                         // rbkmoney-authentication-response содержит только часть обязательных данных
                         .withBody(resource("rbkmoney-authentication-response.json"))));
 
-        Optional<Message> message = threeDsClient.emvcoAuthentication(
+        Optional<Message> message = threeDsClient.threeDsAuthentication(
                 ThreeDsMethodCompletionInd.SUCCESSFULLY_COMPLETED,
                 getPaymentContext(),
                 "threeDsServerTransId",
@@ -92,7 +93,7 @@ public class ThreeDsClientTest extends AbstractThreeDsClientConfig {
                         .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
                         .withBody(resource("error.json"))));
 
-        Optional<Message> message = threeDsClient.emvcoAuthentication(
+        Optional<Message> message = threeDsClient.threeDsAuthentication(
                 ThreeDsMethodCompletionInd.SUCCESSFULLY_COMPLETED,
                 getPaymentContext(),
                 "threeDsServerTransId",
