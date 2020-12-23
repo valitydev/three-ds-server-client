@@ -131,7 +131,7 @@ public class ThreeDsClient {
                 .threeDSRequestorAuthenticationInd(wrapEnum(prepareThreeDSRequestorAuthenticationInd(context))) //todo
                 .threeDSRequestorAuthenticationInfo(getThreeDSRequestorAuthenticationInfo()) //todo
                 .threeDSRequestorChallengeInd(wrapEnum(ThreeDSRequestorChallengeInd.CHALLENGE_REQUESTED_MANDATE)) //todo
-                .threeDSRequestorDecMaxTime("15") //todo mb null
+                .threeDSRequestorDecMaxTime("00015") //todo mb null
                 .threeDSRequestorDecReqInd(wrapEnum(ThreeDSRequestorDecReqInd.DO_NOT_USE_DECOUPLED_AUTH)) //todo mb null
                 .threeDSRequestorPriorAuthenticationInfo(getThreeDSRequestorPriorAuthenticationInfo()) //todo mb null
                 .threeDSServerTransID(threeDsServerTransId)

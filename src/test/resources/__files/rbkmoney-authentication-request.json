@@ -8,7 +8,7 @@
     "threeDSReqAuthData": "rtkrcxbcdg"
   },
   "threeDSRequestorChallengeInd": "04",
-  "threeDSRequestorDecMaxTime": "15",
+  "threeDSRequestorDecMaxTime": "00015",
   "threeDSRequestorDecReqInd": "N",
   "threeDSRequestorPriorAuthenticationInfo": {
     "threeDSReqPriorAuthData": "qoeargloeu",
