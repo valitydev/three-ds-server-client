@@ -18,6 +18,7 @@ import com.rbkmoney.threeds.server.domain.order.ReorderItemsInd;
 import com.rbkmoney.threeds.server.domain.phone.Phone;
 import com.rbkmoney.threeds.server.domain.root.Message;
 import com.rbkmoney.threeds.server.domain.root.rbkmoney.RBKMoneyAuthenticationRequest;
+import com.rbkmoney.threeds.server.domain.root.rbkmoney.RBKMoneyGetChallengeRequest;
 import com.rbkmoney.threeds.server.domain.ship.ShipAddressUsageInd;
 import com.rbkmoney.threeds.server.domain.ship.ShipIndicator;
 import com.rbkmoney.threeds.server.domain.ship.ShipNameIndicator;
@@ -114,6 +115,21 @@ public class ThreeDsClient {
 
         Optional<Message> response = Optional.ofNullable(
                 restTemplate.postForObject(url, rbkMoneyAuthenticationRequest, Message.class));
+
+        log.info(RESPONSE_LOG, endpoint, response.toString());
+
+        return response;
+    }
+
+
+    public Optional<Message> threeDsChallenge(RBKMoneyGetChallengeRequest rbkMoneyGetChallengeRequest) {
+        String url = properties.getSdkUrl();
+        String endpoint = "POST " + url;
+
+        log.info(REQUEST_LOG, endpoint, rbkMoneyGetChallengeRequest.toString());
+
+        Optional<Message> response = Optional.ofNullable(
+                restTemplate.postForObject(url, rbkMoneyGetChallengeRequest, Message.class));
 
         log.info(RESPONSE_LOG, endpoint, response.toString());
 
@@ -321,9 +337,4 @@ public class ThreeDsClient {
         return wrapper;
     }
 
-    private <T> ListWrapper<T> wrapList(List<T> value) {
-        ListWrapper<T> wrapper = new ListWrapper<>();
-        wrapper.setValue(value);
-        return wrapper;
-    }
 }
